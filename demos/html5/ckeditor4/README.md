@@ -16,7 +16,7 @@
 
 You can download and try by yourself a [proof-of-concept demo](#how-to-try-it) using the [@wiris/mathtype-ckeditor4](https://www.npmjs.com/package/@wiris/mathtype-ckeditor4) package. 
 
-Even though, there are some [drawbacks](#drawbacks) with this solution and, at least, [a bug has been detected](#bugs). 
+Even though, there are some [drawbacks](#drawbacks) with this solution and, at least, [a bug has been detected](#bugs) on the Enhanced image plugin. 
 
 We've prepared a step-by-step guide with the [custom integration settings](#how-to-reproduce-it) that need to be used in your source code.
 
@@ -55,10 +55,7 @@ The purpose of this research is to build a CKEditor4 demo using Enhance Image an
 
 At the same time, any unexpected behavior on the MathType plugin resulting of this experiment, will be registered as an issue in our backlog in order to be fixed whenever possible.
 
-The deliveries are:
-
-- An example demo and its source code
-- A step by step guide
+We've prepared an example demo and its source code is avaiable at [src/app.js](src/app.js) file.
 
 ## The example demo
 
@@ -88,87 +85,17 @@ This demo allows to:
 Then follow these instructions to test the demo:
 
 - Edit the formula with MathType editor to a different value
+- Align the formula using the command buttons.
 - Try the contextual menu on the formula image.
+- Select the formula and press enter, nothing should happen.
 - Try the contextual menu on the image.
+- Edit the image with the contextual menu.
 - Drag several times the new image on the editor's window.
+- Select the image and press enter, the image editor should appear.
 - Resize the new image on the editor's window.
 - Cut the formula using the contextual menu.
 - Move the formula by pasting it somewhere else on the editor's window. 
 
-### How to reproduce it:
-
-We offer a step-by-step guide on how to build the previous step demo.
-
-1. Clone `html-integrations` repository
-
-2. Checkout branch `stable`
-
-3. Edit `demos/html5/ckeditor4/app.js` and go the plugin inicialization part to add the `image2` and `justify` plugins like the following:
-
-```Javascript
-  // 1. Add the 'Enhanced Image' and 'Justify' plugins
-  extraPlugins: 'ckeditor_wiris, image2, justify',
-  removePlugins: 'image',
-```
-The `justify` plugin will allow us to align images, the same way the `image2` plugin does.
-
-4. On the `instanceReady`, a few lines of code below, add a listener to the image contextual menu to avoid formulas being edited with the `Image2` plugin:
-
-```Javascript
-  // 2. Custom behavior for 'image2' plugin.
-  // 2.1. Remove contextMenu item for Mathematical formulas rendered with MathType.
-  if (evt.editor.contextMenu) {
-    evt.editor.contextMenu.addListener(function(element, selection) {  
-      if (element.hasClass('cke_widget_image')) {
-        // Check if there's a Rendered Image formula from MathType
-        var formula = element.$.getElementsByClassName('Wirisformula');
-        if (formula.length > 0) {
-            // Then, disable the Context menu for Image2.
-            // First, save the items on a variable.
-            var items = evt.editor.contextMenu.items;
-            // Then, remove all context menu items.
-            evt.editor.contextMenu.removeAll();
-            // Finally, add them all again, except the 'image' context menu item.
-            for (var i=0; i < items.length; i++) {
-              if (items[i].command !== 'image') {
-                evt.editor.contextMenu.add(items[i]);
-              }
-            } 
-        }        
-      }
-    });
-  }  
-```
-
-5. On the same `instanceReady` block, add the following to control the drag&drop behaviour.
-
-```Javascript
-  // 2.1. Control 'Enhanced Image' drag&drop behavior to mitigate errors using 'addUpcastCallback'.
-  //      On an already edited image format math formula,
-  //      the first attempt to drag works, the second raises an error. :shrug:
-  //      It works fine and as expected with 'normal' and with, not previously edited MathType, formula images.
-  //      @see: https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_plugins_widget_repository.html#method-addUpcastCallback
-  CKEDITOR.instances.editor.widgets.addUpcastCallback( function( element ) {    
-    // Check whether a MathType generated formula is present.    
-    var e = element;
-    do {
-      if (e.children) e = e.children[0]; 
-      if (e.name == 'img' && e.hasClass('Wirisformula')) {
-        // So, image elements with the "Wirisformula" class will not be upcasted (e.g. to the Image2 widget).
-        return false;
-      }
-    } while (e.children && e.children.length > 0) 
-  });
-
-```
-
-
-6. Finally, in order to mitigate the errors when dragging formulas, use CSS to hide the resizer and dragger icons on Mathematical image formulas only.
-
-```Javascript
-  CKEDITOR.addCss('img.Wirisformula + span.cke_widget_drag_handler_container { display:none !important; } img.Wirisformula + span.cke_image_resizer, img.Wirisformula + span.cke_widget_drag_handler_container + span.cke_image_resizer { display:none !important; }');
-
-```
 
 
 ## Drawbacks
@@ -176,11 +103,34 @@ The `justify` plugin will allow us to align images, the same way the `image2` pl
 There are some drawbacks on this solution, that are consistent with the behavior of the MathType plugin with the default CKEditor image plugin.
 
 1. *Image format mathematical formulas* can't be edited with the Enhanced Image dialog form: the contextual menu item is not shown.
-2. *Image format mathematical formulas* can't be resized with the Enhanced Image plugin: the resize feature is not visible.
-3. *Image format mathematical formulas* can't be dragged once with the Enhanced Image plugin: the drag feature is not visible.
+2. *Image format mathematical formulas* can't be resized with the Enhanced Image plugin: the resize feature is not visible. 
+3. *Image format mathematical formulas* can't be dragged once with the Enhanced Image plugin: the drag feature is not visible. Use Cut+Paste, instead.
 
 ## Bugs
 
-At the same time, we've identified this inconsistent behavior than can be considered a bug:
+At the same time, we've identified this inconsistent behavior than can be considered a bug on the image2 plugin:
 
 1. When a previously edited *Image format mathematical formulas* is been aligned using the [justify](https://ckeditor.com/cke4/addon/justify) plugin, the older value is shown again. Double-clicking the image format mathematical formula again, shows MathType editor with the new value again.
+
+2. The justify command is not compatible with the image2 
+
+**How we fixed:**
+
+The [image2.plugin.js](/demos/html5/ckeditor4/image2.plugin.js) file contains the modification to the `ckeditor4/plugins/image2/plugin.js` original file. 
+
+```Javascript
+
+	function alignCommandIntegrator( editor ) {
+		var execCallbacks = [],
+			enabled;
+
+		return function( value ) {
+			// KB-5603
+			// This is likely to produce issues with MathType
+			// this function is executed before ACF rules are ready.
+			console.log('You are running a patched version of CKEditor4 image2 plugin for validation purposes with WIRIS MathType plugin.');
+			return false;
+			
+			var command = editor.getCommand( 'justify' + value );
+
+```
