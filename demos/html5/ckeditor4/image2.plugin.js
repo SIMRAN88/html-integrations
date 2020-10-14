@@ -1394,6 +1394,7 @@
 			// KB-5603
 			// This is likely to produce issues with MathType
 			// this function is executed before ACF rules are ready.
+			console.log('You are running a patched version of CKEditor4 image2 plugin for validation purposes with WIRIS MathType plugin.');
 			return false;
 			
 			var command = editor.getCommand( 'justify' + value );
