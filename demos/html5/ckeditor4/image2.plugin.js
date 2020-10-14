@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
@@ -8,7 +8,6 @@
 ( function() {
 
     console.log('Image2 custom fTW');
-    
 	var template = '<img alt="" src="" />',
 		templateBlock = new CKEDITOR.template(
 			'<figure class="{captionedClass}">' +
@@ -1392,11 +1391,11 @@
 			enabled;
 
 		return function( value ) {
-			// WIRIS
+			// KB-5603
 			// This is likely to produce issues with MathType
 			// this function is executed before ACF rules are ready.
 			return false;
-
+			
 			var command = editor.getCommand( 'justify' + value );
 
 			// Most likely, the justify plugin isn't loaded.
