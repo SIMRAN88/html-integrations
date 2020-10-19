@@ -7,7 +7,6 @@
 
 ( function() {
 
-    console.log('Image2 custom fTW');
 	var template = '<img alt="" src="" />',
 		templateBlock = new CKEDITOR.template(
 			'<figure class="{captionedClass}">' +
@@ -1395,7 +1394,6 @@
 			// This is likely to produce issues with MathType
 			// this function is executed before ACF rules are ready.
 			console.log('You are running a patched version of CKEditor4 image2 plugin for validation purposes with WIRIS MathType plugin.');
-			return false;
 			
 			var command = editor.getCommand( 'justify' + value );
 
@@ -1414,14 +1412,22 @@
 					var widget = getFocusedWidget( editor );
 
 					if ( widget ) {
-						widget.setData( 'align', value );
+						// KB-5603: Issue detection; needs fixeing.
+						// Collision between 'justify' and 'image2' plugins.
+                        // This line resets the original value, we comment it to avoid errors.
+                        // The widget.data on alignment commands is not correctly updated.
+                        // Looks like the 'alignCommandIntegrator' call is called after the ACF.  
+                        // @see: https://dev.ckeditor.com/ticket/11004#comment:17
+                        // We comment the line to avoid updating the math formula to the previous value.
+                        // See issue {add github issue here}
+						// widget.setData( 'align', value );
 
 						// Once the widget changed its align, all the align commands
 						// must be refreshed: the event is to be cancelled.
-						for ( var i = execCallbacks.length; i--; )
-							execCallbacks[ i ]();
+						// for ( var i = execCallbacks.length; i--; )
+						// 	execCallbacks[ i ]();
 
-						evt.cancel();
+						// evt.cancel();
 					}
 				} );
 			}
