@@ -22,9 +22,9 @@ We've prepared a step-by-step guide with the [custom integration settings](#how-
 
 ## Context
 
-MathType plugin allows to type and handwrite mathematical notation on the CKEditor and include quality math equations in the document.
+*MathType plugin allows to type and handwrite mathematical notation on the CKEditor and include quality math equations in the document.*
 
-The Enhanced Image is an optional plugin, introduced in CKEditor 4.3, that supports inserting images into the editor, and subsitutes the default 'image' plugin.
+*The Enhanced Image is an optional plugin, introduced in CKEditor 4.3, that supports inserting images into the editor, and subsitutes the default 'image' plugin.*
 
 Both plugins affect the markup inside the editor and depend heavily on the `img` element manipulation and supports double-click event on it.
 

@@ -1,8 +1,10 @@
 
 
-# TITLE
+# CKEditor4, compabitility issues between image-based plugins: Enhanced Image and MathType.
 
-// TODO: Index
+// TODO: Description
+
+// TODO: TOC
 
 ## 1. Executive Summary
 
@@ -12,25 +14,28 @@
 
 // TODO
 
+**CKEditor4** is a proven, enterprise-grade WYSIWYG HTML editor with wide browser compatibility, including legacy browsers.
 
+The **Enhanced Image** is an optional plugin, introduced in CKEditor 4.3, that supports inserting images into the editor, and subsitutes the default 'image' plugin.
 
-
-CKEditor is a proven, enterprise-grade WYSIWYG HTML editor with wide browser compatibility, including legacy browsers..
-
-
-**MathType Web** is a WYSIWYG formula editor (equation editor), with classical and handwriting input modes. It's availables as JavaScript plugin for a collection of third party HTML editors like CKEditor, TinyMCE, Froala and others.
+**MathType Web** is a WYSIWYG mathematical formula editor (equation editor), with classical and handwriting input modes. It's available as a plugin for a HTML editors like CKEditor, TinyMCE, Froala and others.
 
 ## 3. Context
 
 // TODO
 
-## 4. Current situation
+## 4. Compatibility issues with default installation
 
-// TODO
+We've prepared [an online demo on jsfiddle.net](https://jsfiddle.net/dcanet/a0qo34dg/30/show) of **a default installation** of CKEditor4 using MathType Web, Enhanced Image and Justify plugins.
+
+// TODO: issues
 
 ## 5. Mitigate bugs using API integration
 
-// TODO
+We've prepared [an online demo on jsfiddle.net](https://jsfiddle.net/dcanet/8eodhus9/31/show) of **a custom installation** of CKEditor4 using MathType Web, Enhanced Image and Justify plugins. It takes advantadge of the CKEDITOR API to mitigate some of the incompatibility issues detected between these plugins.
+
+// TODO: other issues
+
 
 ## 6. Bug detection
 
